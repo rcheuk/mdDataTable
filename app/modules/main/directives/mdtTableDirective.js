@@ -108,6 +108,8 @@
                 sortableColumns: '=',
                 deleteRowCallback: '&',
                 selectedRowCallback: '&',
+                setSelectedRowCallback: '&?',
+                watchModel: '=',
                 saveRowCallback: '&',
                 animateSortIcon: '=',
                 rippleEffect: '=',
@@ -123,6 +125,16 @@
                 initTableStorageServiceAndBindMethods();
 
                 vm.addHeaderCell = addHeaderCell;
+                
+                if ($scope.mdtRowPaginator) {
+                    $scope.$watch('watchModel', function() {
+                        console.log('refreshing model');
+                        if ($scope.watchModel.length > 3) {
+                            $scope.mdtPaginationHelper.setRowsPerPage(5);    
+                        }
+                    });    
+                }
+                                    
 
                 function initTableStorageServiceAndBindMethods(){
                     vm.tableDataStorageService = TableDataStorageFactory.getInstance();

@@ -38,7 +38,7 @@
         };
 
         mdtAjaxPaginationHelper.prototype.getTotalRowsCount = function(){
-            return this.totalPages;
+            return this.totalResultCount;
         };
 
         mdtAjaxPaginationHelper.prototype.getRows = function(){
