@@ -108,7 +108,9 @@
                 sortableColumns: '=',
                 deleteRowCallback: '&',
                 selectedRowCallback: '&',
-                setSelectedRowCallback: '&?',
+                selectedItems: '=',
+                selectionLimit: '=',
+                selectionLimitCallback: '&',
                 watchModel: '=',
                 saveRowCallback: '&',
                 animateSortIcon: '=',
@@ -122,6 +124,8 @@
             controller: function mdtTableController($scope){
                 var vm = this;
 
+                $scope.underSelectionLimit = $scope.selectedItems.length  < $scope.selectionLimit ? true : false;
+                
                 initTableStorageServiceAndBindMethods();
 
                 vm.addHeaderCell = addHeaderCell;
@@ -129,7 +133,7 @@
                 if ($scope.mdtRowPaginator) {
                     $scope.$watch('watchModel', function() {
                         console.log('refreshing model');
-                        if ($scope.watchModel.length > 3) {
+                        if ($scope.watchModel.length >= 2 || $scope.watchModel.length === 0) {
                             $scope.mdtPaginationHelper.setRowsPerPage(5);    
                         }
                     });    
@@ -148,7 +152,8 @@
                             paginationSetting: $scope.paginatedRows,
                             mdtRowOptions: $scope.mdtRow,
                             mdtRowPaginatorFunction: $scope.mdtRowPaginator,
-                            mdtRowPaginatorErrorMessage: $scope.mdtRowPaginatorErrorMessage
+                            mdtRowPaginatorErrorMessage: $scope.mdtRowPaginatorErrorMessage,
+                            selectedItems: $scope.selectedItems
                         });
                     }
                 }
@@ -171,10 +176,24 @@
                     processAttributeProvidedData();
                 }
 
-                function onCheckboxChange(){
-                    $scope.selectedRowCallback({
-                        rows: ctrl.tableDataStorageService.getSelectedRows()
-                    });
+                function onCheckboxChange(row){
+                    if (row.optionList.selected) {
+                        if ($scope.underSelectionLimit) {
+                            $scope.selectedItems.push(row.rowId);
+                            $scope.selectedRowCallback({
+                                rows: $scope.selectedItems
+                            });
+                        } else {
+                            row.optionList.selected = false;
+                            $scope.selectionLimitCallback();
+                        }
+                    } else {
+                        var idx = $scope.selectedItems.indexOf(row.rowId);
+                        if (idx > -1) {
+                            $scope.selectedItems.splice(idx, 1);
+                        }
+                    }
+                    $scope.underSelectionLimit = $scope.selectedItems.length  < $scope.selectionLimit ? true : false;
                 }
 
                 function processAttributeProvidedData(){
@@ -196,7 +215,9 @@
                     _.each(data, function(row){
                         rowId = _.get(row, $scope.mdtRow['table-row-id-key']);
                         columnValues = [];
-
+                        
+                        
+                        
                         _.each($scope.mdtRow['column-keys'], function(columnKey){
                             columnValues.push(_.get(row, columnKey));
                         });

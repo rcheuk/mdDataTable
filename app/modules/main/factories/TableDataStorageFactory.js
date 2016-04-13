@@ -144,10 +144,8 @@
 
             _.each(this.storage, function(rowData){
                 if(rowData.optionList.selected && rowData.optionList.deleted === false){
-
                     if(rowData.rowId){
                         selectedRows.push(rowData.rowId);
-
                     //Fallback when no id was specified
                     } else{
                         selectedRows.push(rowData.data);
@@ -156,6 +154,21 @@
             });
 
             return selectedRows;
+        };
+        
+        TableDataStorageService.prototype.setSelectedRows = function(selectedRows){
+            _.each(this.storage, function(rowData){
+                var isSelected;
+                if(rowData.rowId){
+                    if (_.contains(selectedRows, rowData.rowId)) {
+                        isSelected = true;
+                    } else {
+                        isSelected = false;
+                    }
+                }
+                
+                rowData.optionList.selected = isSelected ? true : false;    
+            });
         };
 
         TableDataStorageService.prototype.getSavedRowData = function(rowData){

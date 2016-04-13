@@ -25,6 +25,8 @@
 
             this.isLoading = false;
 
+            this.selectedRows = params.selectedItems;
+
             //fetching the 1st page
             this.fetchPage(this.page);
         }
@@ -74,9 +76,11 @@
                     that.setRawDataToStorage(that, data.results, that.rowOptions['table-row-id-key'], that.rowOptions['column-keys']);
                     that.totalResultCount = data.totalResultCount;
                     that.totalPages = Math.ceil(data.totalResultCount / that.rowsPerPage);
-
+                    
                     that.isLoadError = false;
                     that.isLoading = false;
+                    
+                    that.tableDataStorageService.setSelectedRows(that.selectedRows);
 
                 }, function(){
                     that.tableDataStorageService.storage = [];
@@ -93,6 +97,7 @@
                 rowId = _.get(row, tableRowIdKey);
                 columnValues = [];
 
+
                 _.each(columnKeys, function(columnKey){
                     //TODO: centralize adding column values into one place.
                     // Duplication occurs at mdtCellDirective's link function.
@@ -103,11 +108,10 @@
                         value: _.get(row, columnKey)
                     });
                 });
-
                 that.tableDataStorageService.addRowData(rowId, columnValues);
             });
         };
-
+        
         mdtAjaxPaginationHelper.prototype.setRowsPerPage = function(rowsPerPage){
             this.rowsPerPage = rowsPerPage;
             this.page = 1;
