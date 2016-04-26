@@ -124,7 +124,7 @@
             controller: function mdtTableController($scope){
                 var vm = this;
 
-                $scope.underSelectionLimit = $scope.selectedItems.length  < $scope.selectionLimit ? true : false;
+                $scope.underSelectionLimit = ($scope.selectedItems && $scope.selectedItems.length  < $scope.selectionLimit) ? true : false;
                 
                 initTableStorageServiceAndBindMethods();
 
@@ -138,6 +138,12 @@
                         }
                     });    
                 }
+                
+                $scope.$watch('selectedItems', function() {
+                    console.log('refreshing model selectedItems', $scope.selectedItems);
+                    $scope.mdtPaginationHelper.setRowsPerPage(5);
+                    $scope.mdtPaginationHelper.updateSelectedItems($scope.selectedItems);    
+                }); 
                                     
 
                 function initTableStorageServiceAndBindMethods(){

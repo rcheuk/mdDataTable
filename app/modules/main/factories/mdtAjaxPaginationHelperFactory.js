@@ -64,6 +64,10 @@
                 });
             }
         };
+        
+        mdtAjaxPaginationHelper.prototype.updateSelectedItems = function(items) {
+            this.selectedRows = items;
+        };
 
         mdtAjaxPaginationHelper.prototype.fetchPage = function(page){
             this.isLoading = true;
