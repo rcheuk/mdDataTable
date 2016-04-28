@@ -8,7 +8,7 @@
                 style="text-align:left;"
                 ng-show="selectableRows"
                 mdt-select-all-rows-handler>
-                <md-checkbox aria-label="select all" ng-model="selectAllRows"></md-checkbox>
+                <md-checkbox aria-label="select all" ng-model="selectAllRows" ng-show="!selectionLimit"></md-checkbox>
             </th>
 
             <th class="column"

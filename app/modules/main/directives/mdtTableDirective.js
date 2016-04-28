@@ -131,18 +131,20 @@
                 vm.addHeaderCell = addHeaderCell;
                 
                 if ($scope.mdtRowPaginator) {
-                    $scope.$watch('watchModel', function() {
+                    $scope.$watchCollection('watchModel', function() {
                         console.log('refreshing model');
-                        if ($scope.watchModel.length >= 2 || $scope.watchModel.length === 0) {
-                            $scope.mdtPaginationHelper.setRowsPerPage(5);    
-                        }
+                        $scope.mdtPaginationHelper.setRowsPerPage(5);    
                     });    
                 }
                 
-                $scope.$watch('selectedItems', function() {
-                    console.log('refreshing model selectedItems', $scope.selectedItems);
-                    $scope.mdtPaginationHelper.setRowsPerPage(5);
-                    $scope.mdtPaginationHelper.updateSelectedItems($scope.selectedItems);    
+                $scope.$watchCollection('selectedItems', function(newValue, oldValue) {
+                    if (!oldValue) {
+                        if ($scope.selectedItems) {
+                            $scope.underSelectionLimit = $scope.selectedItems.length  < $scope.selectionLimit ? true : false;    
+                        }
+                        $scope.mdtPaginationHelper.setRowsPerPage(5);
+                        $scope.mdtPaginationHelper.updateSelectedItems($scope.selectedItems);    
+                    }    
                 }); 
                                     
 
